@@ -19,7 +19,10 @@ export const env = {
   mongoUri: process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  clientOrigins: list(process.env.CLIENT_ORIGIN, 'http://localhost:5173'),
+  // Browser origins never end in "/", so strip any trailing slash from configured URLs.
+  clientOrigins: list(process.env.CLIENT_ORIGIN, 'http://localhost:5173,https://webrtc-client-sand.vercel.app').map(
+    (origin) => (origin.endsWith('/') ? origin.slice(0, -1) : origin)
+  ),
   ringTimeoutMs: Number(process.env.RING_TIMEOUT_MS) || 30_000,
   stunUrls: list(process.env.STUN_URLS, 'stun:stun.l.google.com:19302'),
   turn: {
