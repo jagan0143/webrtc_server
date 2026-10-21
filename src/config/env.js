@@ -24,6 +24,13 @@ export const env = {
     (origin) => (origin.endsWith('/') ? origin.slice(0, -1) : origin)
   ),
   ringTimeoutMs: Number(process.env.RING_TIMEOUT_MS) || 30_000,
+  pushRingTimeoutMs: Number(process.env.PUSH_RING_TIMEOUT_MS) || 45_000,
+  callReconnectGraceMs: Number(process.env.CALL_RECONNECT_GRACE_MS) || 20_000,
+  vapid: {
+    publicKey: process.env.VAPID_PUBLIC_KEY?.trim() || '',
+    privateKey: process.env.VAPID_PRIVATE_KEY?.trim() || '',
+    subject: process.env.VAPID_SUBJECT?.trim() || 'mailto:admin@example.com',
+  },
   stunUrls: list(process.env.STUN_URLS, 'stun:stun.l.google.com:19302'),
   turn: {
     url: process.env.TURN_URL?.trim() || '',

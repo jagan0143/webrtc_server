@@ -12,6 +12,7 @@ import { errorHandler, notFound } from './middleware/error.js';
 import authRoutes from './routes/auth.routes.js';
 import callRoutes from './routes/call.routes.js';
 import configRoutes from './routes/config.routes.js';
+import pushRoutes from './routes/push.routes.js';
 import userRoutes from './routes/user.routes.js';
 import { closeStaleCalls } from './socket/callHandlers.js';
 import { initSocket } from './socket/index.js';
@@ -40,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/calls', callRoutes);
 app.use('/api/config', configRoutes);
+app.use('/api/push', pushRoutes);
 app.use('/api', notFound);
 
 // In production, serve the built React app from the same origin.

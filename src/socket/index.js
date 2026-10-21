@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import { env } from '../config/env.js';
 import { verifyToken } from '../middleware/auth.js';
 import { User } from '../models/User.js';
-import { handleCallDisconnect, registerCallHandlers, userRoom } from './callHandlers.js';
+import { deliverPendingCalls, handleCallDisconnect, registerCallHandlers, userRoom } from './callHandlers.js';
 import * as presence from './presence.js';
 
 export function initSocket(httpServer) {
@@ -25,12 +25,15 @@ export function initSocket(httpServer) {
 
   io.on('connection', (socket) => {
     const { id } = socket.data.user;
-    socket.join(userRoom(id));
-    if (presence.addSocket(id, socket.id)) {
+    void socket.join(userRoom(id));
+    // Older clients don't send `visible`; treat them as on screen.
+    const visible = socket.handshake.auth?.visible !== false;
+    if (presence.addSocket(id, socket.id, visible)) {
       socket.broadcast.emit('presence:update', { userId: id, online: true });
     }
 
     registerCallHandlers(io, socket);
+    deliverPendingCalls(socket);
 
     socket.on('disconnect', () => {
       const wentOffline = presence.removeSocket(id, socket.id);
